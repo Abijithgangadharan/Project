@@ -12,13 +12,7 @@ resource "azurerm_linux_virtual_machine" "example" {
     public_key = file(var.ssh_public_key_path)
   }
 
-  custom_data = base64encode(
-    <<-EOF
-    #!/bin/bash
-    # Move SSH public key to the desired location
-    mv /home/${var.admin_username}/.ssh/authorized_keys /custom/path/authorized_keys
-    EOF
-  )
+  custom_data = base64encode(file("scripts/startup_script.sh"))
 
   network_interface_ids = [azurerm_network_interface.example.id]
 
@@ -28,11 +22,20 @@ resource "azurerm_linux_virtual_machine" "example" {
   }
 
   source_image_reference {
-    publisher = "RedHat"
-    offer     = "RHEL"
-    sku       = "7-LVM"
-    version   = "latest"
+    publisher = var.source_image.publisher
+    offer     = var.source_image.offer
+    sku       = var.source_image.sku
+    version   = var.source_image.version
   }
 
+
   computer_name = var.vm_name
+
+    # Adding tags to the virtual machine
+  tags = {
+    environment = var.environment
+    owner       = var.owner
+    project     = var.project
+  }
+  
 }

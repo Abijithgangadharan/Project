@@ -1,3 +1,4 @@
+## Resource Group
 variable "resource_group_name" {
   description = "Name of the Azure Resource Group"
   type        = string
@@ -8,11 +9,7 @@ variable "resource_group_location" {
   type        = string
 }
 
-variable "admin_username" {
-  description = "The admin username for the virtual machine"
-  type        = string
-}
-
+## VNET
 variable "virtual_network_name" {
   description = "Name of the Azure virtual network"
   type        = string
@@ -39,10 +36,24 @@ variable "private_ip_allocation" {
   default     = "Dynamic"
 }
 
+## Virtual Machine
+variable "admin_username" {
+  description = "The admin username for the virtual machine"
+  type        = string
+}
+
+variable "name_prefix" {
+  description = "Prefix for naming Azure resources"
+  type        = string
+}
+
+
 variable "vm_name" {
   description = "Name of the Azure virtual machine"
   type        = string
+  default     = "${var.name_prefix}-vm"
 }
+
 
 variable "vm_size" {
   description = "Size of the Azure virtual machine"
@@ -54,10 +65,38 @@ variable "vm_size" {
   }
 }
 
-
-
-
 variable "ssh_public_key_path" {
   description = "Path to your SSH public key file"
+  type        = string
+}
+
+variable "source_image" {
+  description = "Source image reference for the Azure Linux Virtual Machine"
+  type        = object({
+    publisher = string
+    offer     = string
+    sku       = string
+    version   = string
+  })
+  default = {
+    publisher = "RedHat"
+    offer     = "RHEL"
+    sku       = "7-LVM"
+    version   = "latest"
+  }
+}
+
+variable "environment" {
+  description = "Environment tag for the virtual machine"
+  type        = string
+}
+
+variable "owner" {
+  description = "Owner tag for the virtual machine"
+  type        = string
+}
+
+variable "project" {
+  description = "Project tag for the virtual machine"
   type        = string
 }
